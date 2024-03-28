@@ -11,6 +11,13 @@
 #include "Product.h"
 
 
+struct Kit {
+    std::size_t position = 0;
+    std::size_t count = 0;
+    std::vector<std::string> names;
+
+};
+
 class DocumentFileParser {
 public:
 
@@ -18,7 +25,7 @@ public:
     DocumentFileParser(const std::string &file);
 
 
-    std::vector<ProductReceipt> getProduct(bool skipFirstLine = true);
+    std::vector<Kit> getProduct(bool skipFirstLine = true);
 
 
 private:
@@ -34,7 +41,7 @@ private:
 
     std::vector<std::string> _parserNames(std::string line);
 
-    std::pair<std::size_t, std::size_t> _parserPositionAndCount(std::string line, std::size_t &i);
+    std::pair<std::size_t, std::size_t> _parserPositionAndCount(std::string line);
 
 
     _Line _parserLine(std::string line);

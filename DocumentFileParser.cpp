@@ -13,8 +13,8 @@ DocumentFileParser::DocumentFileParser(const std::string &file) {
     std::noskipws(_file);
 }
 
-std::vector<ProductReceipt> DocumentFileParser::getProduct(bool skipFirstLine) {
-    std::vector<ProductReceipt> products;
+std::vector<Kit> DocumentFileParser::getProduct(bool skipFirstLine) {
+    std::vector<Kit> products;
 
     std::string line;
 
@@ -24,19 +24,16 @@ std::vector<ProductReceipt> DocumentFileParser::getProduct(bool skipFirstLine) {
 
     while (std::getline(_file, line))
         try {
-            if(line.empty()){
+            if (line.empty()) {
                 continue;
             }
 
             auto r = _parserLine(line);
 
-            for (auto name: r.names) {
-                products.push_back({r.position, r.count, name});
-            }
-
+            products.push_back({.position = r.position, .count = r.count, .names = r.names});
 
         } catch (const std::exception &exp) {
-            std::cerr << "Ошибка при обработке строки:" << exp.what() << '\n';
+            std::cerr << "Неправильный формат строки: (" << line << ")\n";
         }
 
 
@@ -46,10 +43,12 @@ std::vector<ProductReceipt> DocumentFileParser::getProduct(bool skipFirstLine) {
 std::vector<std::string> DocumentFileParser::_parserNames(std::string line) {
     std::vector<std::string> names;
 
-    std::regex r("\"\\w+\",?", std::regex_constants::ECMAScript);
+
+
+    std::regex r("\"[\\w аА-яЯ\"]+\",?", std::regex_constants::ECMAScript);
     std::smatch m;
 
-    std::string::const_iterator startIt = line.begin();
+    auto startIt = line.cbegin();
 
     while (std::regex_search(startIt, line.cend(), m, r)) {
         for (auto it: m) {
@@ -76,12 +75,14 @@ std::vector<std::string> DocumentFileParser::_parserNames(std::string line) {
 
 DocumentFileParser::_Line DocumentFileParser::_parserLine(std::string line) {
 
-    std::size_t lastIndex = 0;
 
-    auto [position, count] = _parserPositionAndCount(line, lastIndex);
 
-    if (lastIndex == line.npos) {
-        return {};
+    auto [position, count] = _parserPositionAndCount(line);
+
+    std::size_t  lastIndex = line.find('"');
+
+    if (lastIndex == std::string::npos) {
+        return {position, {}, count};
     }
 
     line = line.substr(lastIndex);
@@ -98,16 +99,13 @@ DocumentFileParser::_Line DocumentFileParser::_parserLine(std::string line) {
     return result;
 }
 
-std::pair<std::size_t, std::size_t> DocumentFileParser::_parserPositionAndCount(std::string line, std::size_t &i) {
+std::pair<std::size_t, std::size_t> DocumentFileParser::_parserPositionAndCount(std::string line) {
 
     std::size_t lastIndex = line.find_first_of(" ");
     auto position = std::stoull(line.substr(0, lastIndex));
     line = line.substr(lastIndex + 1);
     lastIndex = line.find_first_of(" ");
-
     auto count = std::stoull(line.substr(0, lastIndex));
-
-    i = lastIndex;
 
     return {position, count};
 }

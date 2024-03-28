@@ -22,6 +22,9 @@ public:
 
     Product getProductByName(const std::string &name) const;
 
+    std::size_t getProductCountByName(const std::string &name) const {
+        return getProductByName(name).count;
+    }
 
 private:
     std::map<std::string, Product> _data;

@@ -30,7 +30,7 @@ std::vector<Product> KitFileParser::getProduct(bool skipFirstLine) {
 
             products.push_back({count, name});
         } catch (const std::exception &exp) {
-            std::cerr << "Ошибка при обработке строки:" << exp.what() << '\n';
+            std::cerr << "Неправильный формат строки: (" << line << ")\n";
         }
 
 

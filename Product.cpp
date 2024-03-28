@@ -9,7 +9,4 @@ Product::Product(std::size_t count, const std::string &name)
 
 }
 
-ProductReceipt::ProductReceipt(std::size_t position, std::size_t count, const std::string &name)
-        : position(position), Product(count, name) {
 
-}

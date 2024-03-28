@@ -18,12 +18,5 @@ struct Product {
 
 };
 
-struct ProductReceipt : public Product {
-    std::size_t position;
-
-    ProductReceipt(std::size_t position = 0, std::size_t count = 0, const std::string &name = "");
-
-};
-
 
 #endif //RSSIB_SOLUTIONS_PRODUCT_H
