@@ -16,7 +16,9 @@ struct ProductOut {
     std::size_t count = 0;
 };
 
-auto product_fold(Database &db, const std::vector<Kit> &documentProducts) {
+//accumulate - Указывает суммировать товары по имени или нет.
+//
+auto product_fold(Database &db, const std::vector<Kit> &documentProducts, bool accumulate = false) {
     std::map<std::string, ProductOut> map;
 
     for (auto it: documentProducts) {
@@ -41,7 +43,7 @@ auto product_fold(Database &db, const std::vector<Kit> &documentProducts) {
                 } else if (it.count >= map[i].count && it.names.size() == 1) {
                     map[i].position = it.position;
                 }
-            }else if( map[i].count < productCount){
+            }else if( map[i].count < productCount && accumulate){
                 auto &item = map[i];
                 item.count += it.count;
                 item.name = i;
